@@ -1,0 +1,9 @@
+Snap2Schedule_Excel_Usage_Guide.md
+.venv/
+__pycache__/
+*.py[cod]
+
+.env
+
+.vscode/
+.idea/
