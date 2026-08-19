@@ -1,7 +1,10 @@
-from pydantic import BaseModel, Field
-from datetime import datetime
+from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime, date, time
+from typing import Literal
 
 class CalendarEvent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     title: str
     description: str | None = None
     start_datetime: datetime
@@ -9,13 +12,16 @@ class CalendarEvent(BaseModel):
     location: str | None = None
     confidence: float = Field(ge=0.0, le=1.0)
 
-calendar_event = CalendarEvent(
-    title="Team Meeting",
-    description="Discuss project updates and next steps.",
-    start_datetime="2026-08-20T14:00:00+07:00",
-    location="Conference Room",
-    confidence=0.1
-)
+class ExtractedEvent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
-
-print(calendar_event.model_dump())
+    title: str | None
+    description: str | None
+    start_date: date | None
+    start_time: str | None
+    start_day_part: Literal["morning", "afternoon", "evening"] | None
+    end_date: date | None
+    end_time: str | None
+    end_day_part: Literal["morning", "afternoon", "evening"] | None
+    location: str | None
+    confidence: float | None = Field(ge=0.0, le=1.0)
