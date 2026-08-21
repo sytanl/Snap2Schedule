@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from datetime import datetime, date, time
+from datetime import datetime, date
 from typing import Literal
 
 class CalendarEvent(BaseModel):
@@ -25,3 +25,12 @@ class ExtractedEvent(BaseModel):
     end_day_part: Literal["morning", "afternoon", "evening"] | None
     location: str | None
     confidence: float | None = Field(ge=0.0, le=1.0)
+
+class ValidationResult(BaseModel):
+    status: Literal[
+        "valid",
+        "needs_clarification",
+        "invalid",
+    ]
+    errors: list[str] = []
+    missing_fields: list[str] = []

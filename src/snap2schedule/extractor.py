@@ -1,24 +1,22 @@
 from datetime import datetime
-from snap2schedule.schema import ExtractedEvent
-from snap2schedule.llm_client import client
-from prompts.event_extraction import EXTRACTION_SYSTEM_PROMPT
-from snap2schedule.config import MODEL
-from zoneinfo import ZoneInfo
+from .schema import ExtractedEvent
+from .llm_client import client
+from .prompts.event_extraction import EXTRACTION_SYSTEM_PROMPT
+from .config import MODEL
+from .time_context import TimeContext
 
-TZ_NAME = "Asia/Ho_Chi_Minh"
-
-def extract_event(user_input: str) -> ExtractedEvent:
+def extract_event(user_input: str, time_context: TimeContext | None = None) -> ExtractedEvent:
     if not user_input.strip():
         raise ValueError("user_input must not be empty")
 
-    tz = ZoneInfo(TZ_NAME)
-    current_datetime = datetime.now(tz)
+    if time_context is None:
+        time_context = TimeContext()
 
     system_prompt = EXTRACTION_SYSTEM_PROMPT.format(
-        current_datetime=current_datetime.isoformat(),
-        timezone=TZ_NAME,
+        current_datetime=time_context.now.isoformat(),
+        timezone=time_context.timezone_name,
+        current_weekday=time_context.weekday_name
     )
-
     response = client.chat.completions.create(
         model=MODEL,
         messages=[

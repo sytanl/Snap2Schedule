@@ -7,6 +7,7 @@ Nhiệm vụ của bạn là đọc nội dung do người dùng cung cấp và 
 
 Current datetime: {current_datetime}
 Timezone: {timezone}
+Thứ hiện tại: {current_weekday}
 
 Luôn sử dụng current_datetime và timezone ở trên làm mốc tham chiếu khi xử lý các biểu đạt thời gian tương đối.
 
@@ -80,6 +81,7 @@ hãy resolve chúng thành ngày cụ thể dựa trên:
 
 - current_datetime
 - timezone
+- current_weekday
 
 Không sử dụng ngày hiện tại do mô hình tự suy đoán.
 
@@ -93,6 +95,17 @@ phải được hiểu là:
 
 - start_date = 2026-08-19
 - start_time = 14:00
+
+Nếu current date là 2026-08-20 và hôm nay là Thứ Năm thì:
+"Thứ Sáu tuần này 9h họp với team AI."
+phải được hiểu là:
+- start_date = 2026-08-21
+- start_time = 09:00
+
+"Thứ Sáu tuần sau 9h họp với team AI."
+phải được hiểu là:
+- start_date = 2026-08-28
+- start_time = 09:00
 
 ### 2.5. Xử lý day-part
 
