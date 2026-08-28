@@ -15,15 +15,13 @@ def validate_extracted_event(extracted_event: ExtractedEvent) -> ValidationResul
     # Check for logical consistency
     if extracted_event.start_date and extracted_event.end_date:
         if extracted_event.start_date > extracted_event.end_date:
-            errors.append("start_date cannot be after end_date")
+            errors.append("END_DATE_BEFORE_START_DATE")
 
     if extracted_event.start_time and extracted_event.end_time:
         if extracted_event.start_time < "00:00" or extracted_event.start_time > "24:00" or extracted_event.end_time < "00:00" or extracted_event.end_time > "24:00":
-            errors.append("start_time and end_time must be valid times in 24-hour format (HH:MM)")
-        if extracted_event.start_time > extracted_event.end_time:
-            errors.append("end_datetime must be after start_datetime")
-        if extracted_event.start_time == extracted_event.end_time and extracted_event.start_date == extracted_event.end_date:
-            errors.append("end_datetime must be after start_datetim")
+            errors.append("INVALID_TIME_FORMAT")
+        if (extracted_event.start_time > extracted_event.end_time) or (extracted_event.start_time == extracted_event.end_time and extracted_event.start_date == extracted_event.end_date):
+            errors.append("END_TIME_BEFORE_START_TIME")
 
     if missing_fields:
         status = "needs_clarification"
