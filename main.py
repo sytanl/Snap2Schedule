@@ -1,34 +1,24 @@
-# from src.snap2schedule.extractor import extract_event
+from src.snap2schedule.graph import graph
+from langgraph.types import Command
 
-# USER_INPUT = "Mai 14h họp, kết thúc 13h30."
+config = {
+    "configurable": {
+        "thread_id": "test-001"
+    }
+}
 
-# event = extract_event(USER_INPUT)
-# print(event)
-from datetime import datetime
-from zoneinfo import ZoneInfo
-
-from src.snap2schedule.extractor import extract_event
-from src.snap2schedule.time_context import TimeContext
-from src.snap2schedule.validator import validate_extracted_event
-
-
-fixed = datetime(
-    2026,
-    8,
-    20,
-    10,
-    0,
-    tzinfo=ZoneInfo("Asia/Ho_Chi_Minh"),
+result = graph.invoke(
+    {
+        "user_input": "Chiều mai họp với Minh nhé."
+    },
+    config=config,
 )
 
-ctx = TimeContext(fixed_datetime=fixed)
+print(result)
 
-event = extract_event(
-    "Tomorrow at 12 PM review the demo.",
-    time_context=ctx,
+result = graph.invoke(
+    Command(resume="2h, 1 tiếng"),
+    config=config,
 )
 
-validation_result = validate_extracted_event(event)
-
-print(event)
-print(validation_result)
+print(result)
