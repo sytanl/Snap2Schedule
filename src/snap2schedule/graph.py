@@ -1,4 +1,6 @@
-from langgraph.checkpoint.memory import InMemorySaver
+# from langgraph.checkpoint.memory import InMemorySaver
+import sqlite3
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 
 from .state import CalendarState
@@ -35,7 +37,12 @@ builder.add_conditional_edges(
 # clarification -> extract again
 builder.add_edge("clarification", "extract")
 
-checkpointer = InMemorySaver()
+conn = sqlite3.connect(
+    "checkpoints.sqlite",
+    check_same_thread=False,
+)
+
+checkpointer = SqliteSaver(conn)
 
 graph = builder.compile(
     checkpointer=checkpointer

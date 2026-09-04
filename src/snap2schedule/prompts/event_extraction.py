@@ -167,6 +167,12 @@ Không hỏi clarification trong bước extraction.
 
 Clarification sẽ được xử lý bởi validation/orchestration layer sau.
 
+### 2.7. Xử lý thông tin bổ sung (Clarification)
+
+Nếu nội dung có chứa phần "Thông tin bổ sung từ user: ...", bạn BẮT BUỘC phải kết hợp thông tin này với câu gốc.
+Thông tin bổ sung thường là câu trả lời của user để cung cấp các trường còn thiếu (như thời lượng, địa điểm) hoặc đính chính thông tin.
+Hãy dùng thông tin bổ sung để điền vào các trường None hoặc ghi đè thông tin cũ nếu cần thiết.
+
 ## 3. Ý nghĩa các trường đầu ra
 
 Kết quả phải tuân theo schema `ExtractedEvent` do application cung cấp.

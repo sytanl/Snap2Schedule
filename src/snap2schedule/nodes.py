@@ -4,6 +4,7 @@ from .extractor import extract_event
 from .validator import validate_extracted_event
 from .clarification import build_clarification
 from langgraph.types import interrupt
+from .trace import print_trace
 
 def extract_event_node(
     state: CalendarState,
@@ -13,9 +14,19 @@ def extract_event_node(
     """
     extracted_event = extract_event(state["user_input"])
 
-    return {
+    result = {
         "extracted_event": extracted_event,
     }
+
+    print_trace(
+        "extract_event_node",
+        {
+            **state,
+            **result,
+        },
+    )
+
+    return result
 
 
 def validate_event_node(
@@ -29,9 +40,19 @@ def validate_event_node(
 
     validation_result = validate_extracted_event(state["extracted_event"])
 
-    return  {
+    result = {
         "validation_result": validation_result,
     }
+
+    print_trace(
+        "validate_event_node",
+        {
+            **state,
+            **result,
+        },
+    )
+
+    return result
 
 def clarification_node(
     state: CalendarState,
@@ -56,6 +77,14 @@ def clarification_node(
         raise ValueError(
             "clarification_question is required before clarification"
         )
+
+    print_trace(
+        "clarification_node",
+        {
+            **state,
+            "clarification_message": clarification_question,
+        },
+    )
 
     user_response = interrupt(clarification_question)
 

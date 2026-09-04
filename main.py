@@ -14,11 +14,11 @@ result = graph.invoke(
     config=config,
 )
 
-print(result)
+# print(result)
 
-result = graph.invoke(
-    Command(resume="2h, 1 tiếng"),
-    config=config,
-)
+# result = graph.invoke(
+#     Command(resume="2h, 1 tiếng"),
+#     config=config,
+# )
 
-print(result)
+# print(result)

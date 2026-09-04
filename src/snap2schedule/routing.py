@@ -12,9 +12,13 @@ def route_after_validation(
             "validation_result is required before routing"
         )
 
-    validation_result = state["validation_result"]
+    if state["validation_result"].status == "valid":
+        route = "complete"
+    else:
+        route = "clarification"
 
-    if validation_result.status == "valid":
-        return "complete"
+    print(
+        f"[ROUTE] validation -> {route}"
+    )
 
-    return "clarification"  
+    return route
