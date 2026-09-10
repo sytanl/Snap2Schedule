@@ -9,3 +9,6 @@ __pycache__/
 .idea/
 
 checkpoints.sqlite
+
+credentials.json
+token.json
