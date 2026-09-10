@@ -9,3 +9,7 @@ class CalendarState(TypedDict):
     clarification_message: NotRequired[str]
     preview_message: NotRequired[str]
     approval: NotRequired[bool]
+    conflict: NotRequired[bool]
+    conflict_message: NotRequired[str]
+    create_anyway: NotRequired[bool]
+    event_id: NotRequired[str]

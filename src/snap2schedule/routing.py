@@ -31,3 +31,21 @@ def route_after_approval(
         return "create"
 
     return "cancel"
+
+def route_after_conflict(
+    state: CalendarState,
+) -> Literal["conflict", "no_conflict"]:
+
+    if state.get("conflict") is True:
+        return "conflict"
+
+    return "no_conflict"
+
+def route_after_conflict_warning(
+    state: CalendarState,
+) -> Literal["create_anyway", "cancel"]:
+
+    if state.get("create_anyway") is True:
+        return "create_anyway"
+
+    return "cancel"

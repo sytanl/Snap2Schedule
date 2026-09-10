@@ -6,7 +6,10 @@ from .clarification import build_clarification
 from langgraph.types import interrupt
 from .calendar.calendar_writer import create_event
 from .trace import print_trace
+from .calendar.conflict_checker import check_conflict
+from .calendar.calendar_reader import get_events
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 def extract_event_node(
     state: CalendarState,
@@ -152,14 +155,17 @@ def create_event_node(
             "Event must have start and end date/time before creation"
         )
 
+    tz = ZoneInfo("Asia/Ho_Chi_Minh")
     start = datetime.combine(
         event.start_date,
         datetime.strptime(event.start_time, "%H:%M").time(),
+        tzinfo=tz,
     )
 
     end = datetime.combine(
         event.end_date,
         datetime.strptime(event.end_time, "%H:%M").time(),
+        tzinfo=tz,
     )
 
     event_id = create_event(
@@ -183,3 +189,53 @@ def create_event_node(
     )
 
     return result
+
+def check_conflict_node(
+    state: CalendarState,
+) -> dict[str, bool]:
+    event = state["extracted_event"]
+    tz = ZoneInfo("Asia/Ho_Chi_Minh")
+    start = datetime.combine(
+        event.start_date,
+        datetime.strptime(event.start_time, "%H:%M").time(),
+        tzinfo=tz,
+    )
+    end = datetime.combine(
+        event.end_date,
+        datetime.strptime(event.end_time, "%H:%M").time(),
+        tzinfo=tz,
+    )
+
+    existing_events = get_events(start, end)
+
+    conflict = check_conflict(start, end, existing_events)
+    
+    result = {"conflict": conflict}
+
+    print_trace(
+        "check_conflict_node",
+        {
+            **state,
+            **result,
+        },
+    )
+
+    return result
+
+def conflict_warning_node(
+    state: CalendarState,
+) -> dict[str, bool]:
+
+    response = interrupt(
+        "Lịch này đang bị trùng với một sự kiện hiện có. "
+        "Bạn có muốn tạo sự kiện này anyway không?"
+    )
+
+    create_anyway = (
+        response.strip().lower()
+        in {"có", "yes", "y", "ok"}
+    )
+
+    return {
+        "create_anyway": create_anyway,
+    }
