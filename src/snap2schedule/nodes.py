@@ -8,6 +8,8 @@ from .calendar.calendar_writer import create_event
 from .trace import print_trace
 from .calendar.conflict_checker import check_conflict
 from .calendar.calendar_reader import get_events
+from .paddleocr_tool import extract_text_from_image as paddleocr
+from .tesseract_tool import extract_text_from_image as tesseract
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -238,4 +240,25 @@ def conflict_warning_node(
 
     return {
         "create_anyway": create_anyway,
+    }
+
+def ocr_input_node(
+    image_path: str,
+) -> dict[str, str | float]:
+
+    raw_text, confidence = paddleocr(image_path)
+
+    if confidence >= 0.85:
+        return {
+            "raw_text": raw_text,
+            "ocr_confidence": confidence,
+            "ocr_engine": "paddleocr",
+        }
+
+    raw_text, confidence = tesseract(image_path)
+
+    return {
+        "raw_text": raw_text,
+        "ocr_confidence": confidence,
+        "ocr_engine": "tesseract",
     }
