@@ -34,3 +34,9 @@ class ValidationResult(BaseModel):
     ]
     errors: list[str] = []
     missing_fields: list[str] = []
+
+class CalendarEventSummary(BaseModel):
+    id: str
+    title: str
+    start: str
+    end: str

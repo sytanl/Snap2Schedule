@@ -10,7 +10,7 @@ SCOPES = [
 
 
 def get_calendar_service():
-    token_path = Path("token.json")
+    token_path = Path("src/snap2schedule/credentials/token.json")
 
     if not token_path.exists():
         raise FileNotFoundError(
