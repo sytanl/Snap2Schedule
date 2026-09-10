@@ -22,3 +22,12 @@ def route_after_validation(
     )
 
     return route
+
+def route_after_approval(
+    state: CalendarState,
+) -> Literal["create", "cancel"]:
+
+    if state.get("approval") is True:
+        return "create"
+
+    return "cancel"

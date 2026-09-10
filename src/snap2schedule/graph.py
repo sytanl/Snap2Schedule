@@ -8,8 +8,10 @@ from .nodes import (
     extract_event_node,
     validate_event_node,
     clarification_node,
+    preview_event_node,
+    create_event_node,
 )
-from .routing import route_after_validation
+from .routing import route_after_validation, route_after_approval
 
 builder = StateGraph(CalendarState)
 
@@ -17,6 +19,8 @@ builder = StateGraph(CalendarState)
 builder.add_node("extract", extract_event_node)
 builder.add_node("validate", validate_event_node)
 builder.add_node("clarification", clarification_node)
+builder.add_node("preview", preview_event_node)
+builder.add_node("create", create_event_node)
 
 # START -> extract
 builder.add_edge(START, "extract")
@@ -29,13 +33,26 @@ builder.add_conditional_edges(
     "validate",
     route_after_validation,
     {
-        "complete": END,
+        "complete": "preview",
         "clarification": "clarification",
     },
 )
 
 # clarification -> extract again
 builder.add_edge("clarification", "extract")
+
+# preview -> approval routing
+builder.add_conditional_edges(
+    "preview",
+    route_after_approval,
+    {
+        "create": "create",
+        "cancel": END,
+    },
+)
+
+# create -> END
+builder.add_edge("create", END)
 
 conn = sqlite3.connect(
     "checkpoints.sqlite",

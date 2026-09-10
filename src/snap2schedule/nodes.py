@@ -4,7 +4,9 @@ from .extractor import extract_event
 from .validator import validate_extracted_event
 from .clarification import build_clarification
 from langgraph.types import interrupt
+from .calendar.calendar_writer import create_event
 from .trace import print_trace
+from datetime import datetime
 
 def extract_event_node(
     state: CalendarState,
@@ -103,3 +105,81 @@ def clarification_node(
         "clarification_message": clarification_question,
         "user_input": updated_user_input,
     }
+    
+def preview_event_node(
+    state: CalendarState,
+) -> dict[str, str | bool]:
+
+    event = state["extracted_event"]
+
+    message = (
+        "Xác nhận tạo sự kiện\n\n"
+        f"Tiêu đề: {event.title}\n"
+        f"Ngày: {event.start_date}\n"
+        f"Thời gian: {event.start_time} - {event.end_time}\n"
+        f"Địa điểm: {event.location}\n\n"
+        "Bạn có muốn tạo sự kiện này vào Google Calendar không?"
+    )
+
+    user_response = interrupt(message)
+
+    approved = user_response.strip().lower() in {
+        "yes",
+        "y",
+        "có",
+        "ok",
+        "đồng ý",
+    }
+
+    return {
+        "preview_message": message,
+        "approval": approved,
+    }
+
+def create_event_node(
+    state: CalendarState,
+) -> dict[str, str]:
+
+    event = state["extracted_event"]
+
+    if (
+        event.start_date is None
+        or event.start_time is None
+        or event.end_date is None
+        or event.end_time is None
+    ):
+        raise ValueError(
+            "Event must have start and end date/time before creation"
+        )
+
+    start = datetime.combine(
+        event.start_date,
+        datetime.strptime(event.start_time, "%H:%M").time(),
+    )
+
+    end = datetime.combine(
+        event.end_date,
+        datetime.strptime(event.end_time, "%H:%M").time(),
+    )
+
+    event_id = create_event(
+        title=event.title,
+        start=start,
+        end=end,
+        description=event.description,
+        location=event.location,
+    )
+
+    result = {
+        "event_id": event_id,
+    }
+
+    print_trace(
+        "create_event_node",
+        {
+            **state,
+            **result,
+        },
+    )
+
+    return result

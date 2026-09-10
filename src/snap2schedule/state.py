@@ -7,3 +7,5 @@ class CalendarState(TypedDict):
     extracted_event: NotRequired[ExtractedEvent]
     validation_result: NotRequired[ValidationResult]
     clarification_message: NotRequired[str]
+    preview_message: NotRequired[str]
+    approval: NotRequired[bool]
