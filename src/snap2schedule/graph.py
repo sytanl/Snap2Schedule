@@ -12,12 +12,14 @@ from .nodes import (
     conflict_warning_node,
     preview_event_node,
     create_event_node,
+    ocr_input_node,
 )
 from .routing import (
     route_after_validation,
     route_after_conflict,
     route_after_conflict_warning,
     route_after_approval,
+    route_after_ocr_input,
 )
 
 
@@ -25,6 +27,7 @@ builder = StateGraph(CalendarState)
 
 
 # Add nodes
+builder.add_node("ocr_input", ocr_input_node)
 builder.add_node("extract", extract_event_node)
 builder.add_node("validate", validate_event_node)
 builder.add_node("clarification", clarification_node)
@@ -36,9 +39,16 @@ builder.add_node("preview", preview_event_node)
 builder.add_node("create", create_event_node)
 
 
-# START -> extract
-builder.add_edge(START, "extract")
-
+# START -> conditional routing
+builder.add_conditional_edges(
+    START,
+    route_after_ocr_input,
+    {
+        "ocr_input": "ocr_input",
+        "extract": "extract",
+    },
+)
+builder.add_edge("ocr_input", "extract")
 
 # validate -> conditional routing
 builder.add_conditional_edges(

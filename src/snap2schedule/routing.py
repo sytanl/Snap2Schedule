@@ -49,3 +49,12 @@ def route_after_conflict_warning(
         return "create_anyway"
 
     return "cancel"
+
+def route_after_ocr_input(
+    state: CalendarState,
+) -> Literal["ocr_input", "extract"]:
+
+    if state.get("image_path") is not None:
+        return "ocr_input"
+
+    return "extract"

@@ -4,6 +4,7 @@ from .schema import ExtractedEvent, ValidationResult
 class CalendarState(TypedDict):
     # Workflow state of the whole LangGraph
     user_input: str
+    image_path: NotRequired[str]
     raw_text: NotRequired[str]
     ocr_confidence: NotRequired[float]
     ocr_engine: NotRequired[str]
