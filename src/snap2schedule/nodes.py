@@ -147,28 +147,29 @@ def create_event_node(
 
     event = state["extracted_event"]
 
-    if (
-        event.start_date is None
-        or event.start_time is None
-        or event.end_date is None
-        or event.end_time is None
-    ):
-        raise ValueError(
-            "Event must have start and end date/time before creation"
-        )
-
     tz = ZoneInfo("Asia/Ho_Chi_Minh")
+    from datetime import timedelta
+
+    start_time_str = event.start_time or "09:00"
+    start_date = event.start_date
+    if start_date is None:
+        raise ValueError("Event must have a start date before creation")
+
     start = datetime.combine(
-        event.start_date,
-        datetime.strptime(event.start_time, "%H:%M").time(),
+        start_date,
+        datetime.strptime(start_time_str, "%H:%M").time(),
         tzinfo=tz,
     )
 
-    end = datetime.combine(
-        event.end_date,
-        datetime.strptime(event.end_time, "%H:%M").time(),
-        tzinfo=tz,
-    )
+    # Fallback: if end_time/end_date missing, use start + 1 hour
+    if event.end_time and event.end_date:
+        end = datetime.combine(
+            event.end_date,
+            datetime.strptime(event.end_time, "%H:%M").time(),
+            tzinfo=tz,
+        )
+    else:
+        end = start + timedelta(hours=1)
 
     event_id = create_event(
         title=event.title,
@@ -197,16 +198,24 @@ def check_conflict_node(
 ) -> dict[str, bool]:
     event = state["extracted_event"]
     tz = ZoneInfo("Asia/Ho_Chi_Minh")
+
+    start_time_str = event.start_time or "09:00"
     start = datetime.combine(
         event.start_date,
-        datetime.strptime(event.start_time, "%H:%M").time(),
+        datetime.strptime(start_time_str, "%H:%M").time(),
         tzinfo=tz,
     )
-    end = datetime.combine(
-        event.end_date,
-        datetime.strptime(event.end_time, "%H:%M").time(),
-        tzinfo=tz,
-    )
+
+    # Fallback: if end_time/end_date missing, use start + 1 hour
+    if event.end_time and event.end_date:
+        end = datetime.combine(
+            event.end_date,
+            datetime.strptime(event.end_time, "%H:%M").time(),
+            tzinfo=tz,
+        )
+    else:
+        from datetime import timedelta
+        end = start + timedelta(hours=1)
 
     existing_events = get_events(start, end)
 

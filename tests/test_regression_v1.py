@@ -29,7 +29,8 @@ def record(case_id: str, description: str, passed: bool, detail: str = ""):
     )
 
     status = "PASS" if passed else "FAIL"
-    print(f"{case_id}: {status} - {description}")
+    msg = f"{case_id}: {status} - {description}"
+    print(msg.encode('utf-8').decode('cp1252', 'ignore'))
 
     if detail:
         print(f"      {detail}")
