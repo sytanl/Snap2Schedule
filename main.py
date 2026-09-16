@@ -1,5 +1,24 @@
-def main():
-    print("Snap2Schedule enviroment is set up correctly. You can now run the application.")
+from src.snap2schedule.graph import graph
+from langgraph.types import Command
 
-if __name__ == "__main__":
-    main()
+config = {
+    "configurable": {
+        "thread_id": "test-001"
+    }
+}
+
+result = graph.invoke(
+    {
+        "user_input": "Chiều mai họp với Minh nhé."
+    },
+    config=config,
+)
+
+# print(result)
+
+# result = graph.invoke(
+#     Command(resume="2h, 1 tiếng"),
+#     config=config,
+# )
+
+# print(result)

@@ -7,3 +7,10 @@ __pycache__/
 
 .vscode/
 .idea/
+
+checkpoints.sqlite
+checkpoints.sqlite-shm
+checkpoints.sqlite-wal
+
+credentials.json
+token.json
